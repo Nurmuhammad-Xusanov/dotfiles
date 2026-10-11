@@ -1,0 +1,20 @@
+# Qt caches the QML and JS it compiles next to the source.
+*.qmlc
+*.jsc
+
+# scripts/generate-sounds.py
+__pycache__/
+*.pyc
+
+# npx prettier, when it is run from the checkout
+node_modules/
+
+# Editors, and what omarchy's refresh commands leave behind
+*~
+*.swp
+*.swo
+*.bak
+*.log
+.DS_Store
+.idea/
+.vscode/

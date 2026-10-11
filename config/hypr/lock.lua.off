@@ -1,0 +1,24 @@
+-- ~/.config/hypr/lock.lua
+
+-- 1. Agar hyprlock ishlab turgan bo'lsa, qayta ishga tushirmaydi
+local check = io.popen("pidof hyprlock")
+local running = check:read("*a")
+check:close()
+
+if running ~= "" then
+    os.exit(0)
+end
+
+-- 2. Fonda 90 soniyalik taymer: vaqt o'tganda hyprlock hali ham ochiq bo'lsa suspend qiladi
+-- (Agar 90 soniya ichida parol terib ochsangiz, pidof topilmaydi va suspend bekor bo'ladi)
+os.execute([[
+    (
+        sleep 90
+        if pidof hyprlock > /dev/null; then
+            systemctl suspend
+        fi
+    ) &
+]])
+
+-- 3. Bloklash oynasini ochish
+os.execute("hyprlock")

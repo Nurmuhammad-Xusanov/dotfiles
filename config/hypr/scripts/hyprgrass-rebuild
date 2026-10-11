@@ -1,0 +1,69 @@
+#!/bin/bash
+# Rebuild hyprgrass against the running Hyprland and reinstall it to
+# ~/.local/lib/hypr/plugins/libhyprgrass.so.
+#
+# hyprpm is not usable on this machine: its state store lives in
+# /var/cache/hyprpm, which needs root to create. This script does the same job
+# as "hyprpm add && hyprpm enable && hyprpm reload", but entirely as the user.
+#
+# Two things need pinning, or the build breaks:
+#   1. the hyprgrass commit matching this Hyprland version (see hyprpm.toml
+#      commit_pins in the hyprgrass repo - Hyprland v0.56.2 ->
+#      8e605468cbf429791d61ddbfaeb14ff5e08fec3e)
+#   2. glm, which the wf-touch subproject needs. Arch ships it in the `glm`
+#      package; until that is installed, a header-only clone is used instead.
+
+set -euo pipefail
+
+HYPRLAND_COMMIT="efb50993780079460b0cbed1363e2166a2de1d9f"
+HYPRGRASS_COMMIT="8e605468cbf429791d61ddbfaeb14ff5e08fec3e"
+SRC="${HYPRGRASS_SRC:-/tmp/hyprgrass-git}"
+DEST="$HOME/.local/lib/hypr/plugins/libhyprgrass.so"
+
+installed=$(hyprctl version | sed -n 's/.*commit \([0-9a-f]\{40\}\).*/\1/p' | head -1)
+if [ -n "$installed" ] && [ "$installed" != "$HYPRLAND_COMMIT" ]; then
+    echo "WARNING: Hyprland is at $installed but this script pins $HYPRLAND_COMMIT."
+    echo "         Look the new Hyprland commit up in hyprgrass' hyprpm.toml"
+    echo "         commit_pins and update HYPRGRASS_COMMIT before trusting the build."
+fi
+
+if [ ! -d "$SRC/.git" ]; then
+    git clone --recursive https://github.com/horriblename/hyprgrass.git "$SRC"
+fi
+
+git -C "$SRC" fetch --depth 300 origin
+git -C "$SRC" checkout "$HYPRGRASS_COMMIT"
+git -C "$SRC" submodule update --init --recursive
+
+export PKG_CONFIG_PATH=""
+if ! pkgconf --exists glm; then
+    GLM_SRC="${GLM_SRC:-/tmp/glm-src}"
+    GLM_PREFIX="${GLM_PREFIX:-/tmp/glm-prefix}"
+    if [ ! -d "$GLM_SRC/.git" ]; then
+        git clone --depth 1 https://github.com/g-truc/glm.git "$GLM_SRC"
+    fi
+    mkdir -p "$GLM_PREFIX/lib/pkgconfig"
+    cat >"$GLM_PREFIX/lib/pkgconfig/glm.pc" <<EOF
+prefix=$GLM_SRC
+includedir=\${prefix}
+
+Name: GLM
+Description: OpenGL Mathematics
+Version: 1.0.1
+Cflags: -I\${includedir}
+EOF
+    export PKG_CONFIG_PATH="$GLM_PREFIX/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
+fi
+
+rm -rf "$SRC/build"
+meson setup "$SRC/build" "$SRC"
+ninja -C "$SRC/build"
+
+mkdir -p "$(dirname "$DEST")"
+install -m 755 "$SRC/build/src/libhyprgrass.so" "$DEST"
+
+hyprctl plugin unload "$DEST" 2>/dev/null || true
+hyprctl plugin load "$DEST"
+hyprctl reload
+
+echo "hyprgrass $HYPRGRASS_COMMIT installed to $DEST"

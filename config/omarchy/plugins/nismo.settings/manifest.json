@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "nismo.settings",
+  "name": "Settings Menu",
+  "version": "1.0.0",
+  "author": "Nismo",
+  "description": "Hover popup that opens settings widgets and tools in a flyout.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Menu.qml"
+  },
+  "barWidget": {
+    "displayName": "Settings Menu",
+    "description": "A flyout menu of quick settings widgets opened on hover.",
+    "category": "Launcher",
+    "allowMultiple": true,
+    "schema": [
+      {
+        "key": "icon",
+        "type": "text",
+        "label": "Bar Icon",
+        "description": "Unicode glyph shown on the bar button.",
+        "defaultValue": ""
+      },
+      {
+        "key": "items",
+        "type": "custom",
+        "label": "Menu Items",
+        "description": "Widgets or commands shown inside the flyout. Only widgets that are removed from the bar and not used by other modules should be embedded."
+      }
+    ]
+  },
+  "omarchy": {}
+}

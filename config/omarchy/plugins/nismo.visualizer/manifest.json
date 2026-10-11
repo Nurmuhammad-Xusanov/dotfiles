@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "nismo.visualizer",
+  "name": "Music Visualizer",
+  "version": "1.0.0",
+  "author": "nismo",
+  "description": "Live audio spectrum bars in the bar, driven by cava",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Visualizer.qml"
+  },
+  "barWidget": {
+    "displayName": "Music Visualizer",
+    "description": "Live audio spectrum bars in the bar, driven by cava",
+    "category": "Multimedia",
+    "allowMultiple": false
+  }
+}

@@ -1,0 +1,13 @@
+# Junk
+__pycache__/
+*.pyc
+*.bak
+*.bak.*
+.face-id-transactions/
+
+# OS / editor
+.DS_Store
+*~
+
+# Logs / state
+*.log

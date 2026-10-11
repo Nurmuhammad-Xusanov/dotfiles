@@ -1,0 +1,6 @@
+set recolor true
+set recolor-darkcolor "#ffffff"
+set recolor-lightcolor "#000000"
+set default-bg "#000000"
+set recolor-keephue false
+set adjust-open "best-fit"

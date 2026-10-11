@@ -1,0 +1,63 @@
+{
+  // Extend the Quickshell Omarchy menu with JSONC.
+  //
+  // IDs are object keys. The parent is inferred from the dotted id, so
+  // "personal.notes" appears under "personal", and "personal" appears on the
+  // root menu. Reuse an existing id to override/extend it.
+  //
+  // Fields:
+  //   icon        Nerd Font glyph shown in the icon column.
+  //   label       Visible row title.
+  //   action      Shell command to run. If omitted, the row is a submenu.
+  //   target      Existing submenu id to open. Use for links/aliases.
+  //   provider    Runtime provider function/command returning JSON rows.
+  //   aliases     alternate `omarchy menu summon <name>` routes; also searchable.
+  //   description Optional subtitle and extra search text.
+  //   when        Shell condition; hide row when it fails.
+  //   checked     Shell condition; append ✓ when it succeeds.
+  //
+  // Examples:
+  // "personal": {"icon":"","label":"Personal"},
+  // "personal.notes": {"icon":"󰎞","label":"Notes","action":"omarchy-launch-editor ~/notes"},
+  // "personal.files": {"icon":"","label":"Files","action":"uwsm-app -- nautilus ~/Documents"},
+  //
+  // Only use provider when a provider_name function or command named "name"
+  // returns JSON rows. Static submenus only need dotted ids.
+  //
+  // Example: replace the default About action by reusing the same id. Existing
+  // fields are kept unless overridden.
+  // "about": {"icon":"","label":"About","action":"omarchy-launch-or-focus-tui \"zsh -c 'fastfetch; read -k 1'\""},
+
+  // System
+  //
+  // Hibernate is impossible on this machine. The firmware exposes no S4:
+  // /sys/power/disk is "[platform]" (the image may not be written to storage)
+  // and /sys/power/mem_sleep is "[s2idle]" only. `systemctl hibernate` builds
+  // the image and then fails with "hibernation: Error -12 creating image", or
+  // gets rolled back by a wakeup event, leaving a black screen that never
+  // comes back; the next boot then fails to resume. Hide the row so it can
+  // never be started by accident.
+  "system.hibernate": {
+    "icon": "󰤁",
+    "label": "Hibernate",
+    "when": "false",
+    "action": "systemctl hibernate"
+  },
+
+  // Suspend does work, but only as s2idle, which has no visible transition
+  // of its own and can be woken again by any enabled USB controller moments
+  // after it sleeps. Blank the panel first so the sleep is always visible, and
+  // put DPMS back afterwards so a fast wake or a failed suspend can never
+  // leave a black screen behind.
+  //
+  // icon, label and when are restated on purpose: normalizeItem() fills every
+  // field with a fallback and mergeMenuSources() copies those fallbacks over
+  // the defaults, so an override that omits them renders as the raw id with no
+  // icon. Hibernate keeps the defaults for the same reason.
+  "system.suspend": {
+    "icon": "󰒲",
+    "label": "Suspend",
+    "when": "! omarchy-toggle-enabled suspend-off",
+    "action": "hyprctl dispatch dpms off; systemctl suspend; hyprctl dispatch dpms on"
+  }
+}

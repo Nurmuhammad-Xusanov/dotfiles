@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "io.github.saiaungminkhant.nothing-buds",
+  "name": "Nothing Buds",
+  "version": "0.0.7",
+  "author": "Sai Aung Min Khant",
+  "license": "MIT",
+  "description": "ANC, battery and playback controls for Nothing and CMF earbuds",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Nothing Buds",
+    "description": "ANC, battery and playback controls for Nothing and CMF earbuds",
+    "category": "Audio",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}

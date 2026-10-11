@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "fstander.omartillery",
+  "name": "Omartillery",
+  "version": "1.0.0",
+  "author": "Francois Stander",
+  "license": "MIT",
+  "description": "Tactical artillery with collapsing terrain, enemy batteries, branching operations and a shared daily challenge.",
+  "kinds": ["panel", "bar-widget"],
+  "entryPoints": { "panel": "Panel.qml", "barWidget": "BarWidget.qml" },
+  "barWidget": {
+    "displayName": "Omartillery",
+    "description": "Launch Omartillery · angle, power, fire",
+    "category": "Games",
+    "aliases": ["artillery", "cannon", "scorched", "game", "ballistics"],
+    "allowMultiple": false,
+    "defaultSection": "center"
+  }
+}

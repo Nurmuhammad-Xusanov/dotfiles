@@ -1,0 +1,11 @@
+#!/bin/bash
+# Force laptop mode: re-enable the physical keyboard and touchpad and stop the
+# tablet-mode poller. Use this if the touchscreen/lid ever leaves the machine in
+# a state you cannot key out of.
+pkill -f 'hypr/scripts/tablet-mode.sh' 2>/dev/null
+hyprctl eval "hl.device({name='at-translated-set-2-keyboard', enabled=true})" >/dev/null
+hyprctl eval "hl.device({name='syna352b:00-06cb:cfc5-touchpad', enabled=true})" >/dev/null
+pgrep -x wvkbd-mobintl >/dev/null && pkill -x wvkbd-mobintl
+rm -f /tmp/omarchy-tablet-mode
+notify-send "Laptop mode restored" 2>/dev/null
+echo "laptop mode restored"
