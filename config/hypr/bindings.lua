@@ -44,3 +44,7 @@ o.bind("CTRL + SHIFT + A", "Next track", "omarchy-shell media next", { locked = 
 -- (default/hypr/bindings/utilities.lua), and since that bind is registered
 -- first it wins - the keyboard bind was silently dead. SUPER+N is free.
 o.bind("SUPER + N", "Toggle Keyboard", "/home/nismo/.config/hypr/scripts/toggle-keyboard.sh")
+
+-- Reading mode: open the most recent PDF in the reader (night + fullscreen).
+-- SUPER+ALT+P is free (SUPER+P is pseudo-tiling, SUPER+SHIFT+P is Google Photos).
+o.bind("SUPER + ALT + P", "PDF Reader (reading mode)", "/home/nismo/.config/hypr/scripts/reading-mode.sh")

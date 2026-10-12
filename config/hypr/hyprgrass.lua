@@ -96,3 +96,11 @@ hg.bind {
     pattern = { kind = "tap", fingers = 2 },
     action = hl.dsp.exec_cmd("logger -t hyprgrass-selftest TOUCHED"),
 }
+
+-- Reading mode: 4-finger swipe up opens the most recent PDF in the reader
+-- (night + fullscreen). See scripts/reading-mode.sh. 4-finger tap already
+-- toggles fullscreen, so the swipe is free.
+hg.bind {
+    pattern = { kind = "swipe", fingers = 4, direction = "up" },
+    action = hl.dsp.exec_cmd("/home/nismo/.config/hypr/scripts/reading-mode.sh"),
+}

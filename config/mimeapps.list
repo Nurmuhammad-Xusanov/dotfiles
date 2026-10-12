@@ -22,7 +22,7 @@ text/x-c=nvim.desktop
 text/x-c++=nvim.desktop
 application/xml=nvim.desktop
 text/xml=nvim.desktop
-application/pdf=org.kde.okular.desktop
+application/pdf=com.nismo.pdfreader.desktop
 text/markdown=omawrite.desktop
 
 [Added Associations]

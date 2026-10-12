@@ -1,0 +1,8 @@
+# PDF Reader defaults.
+# Loaded from ~/.config/pdfreader/config.toml by pdfreader.config.
+
+# Start every window in OLED night mode (page inverted, black paper).
+night_mode = true
+
+# Open the window fullscreen on launch (reading mode).
+fullscreen_on_open = false
