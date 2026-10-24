@@ -38,6 +38,13 @@ o.bind("SUPER + CTRL + SHIFT + D", "Rotate display", "omarchy-hyprland-monitor-r
 o.bind("CTRL + SHIFT + Z", "Previous track", "omarchy-shell media previous", { locked = true })
 o.bind("CTRL + SHIFT + A", "Next track", "omarchy-shell media next", { locked = true })
 
+-- Copilot tugmasini o'chirish (HP OmniBook X Flip 14)
+-- Omarchy default'da SUPER+SHIFT+code:201 ga bog'langan, shu bog'liqni olib tashlaymiz.
+hl.unbind("SUPER + SHIFT + code:201")
+
+-- Power tugmasini o'chirish — Omarchy system menu chiqmasin.
+hl.unbind("XF86PowerOff")
+
 -- On-screen keyboard for tablet mode.
 --
 -- Not SUPER+K: Omarchy already binds that to the keybindings cheatsheet
@@ -45,6 +52,24 @@ o.bind("CTRL + SHIFT + A", "Next track", "omarchy-shell media next", { locked = 
 -- first it wins - the keyboard bind was silently dead. SUPER+N is free.
 o.bind("SUPER + N", "Toggle Keyboard", "/home/nismo/.config/hypr/scripts/toggle-keyboard.sh")
 
--- Reading mode: open the most recent PDF in the reader (night + fullscreen).
--- SUPER+ALT+P is free (SUPER+P is pseudo-tiling, SUPER+SHIFT+P is Google Photos).
-o.bind("SUPER + ALT + P", "PDF Reader (reading mode)", "/home/nismo/.config/hypr/scripts/reading-mode.sh")
+-- ── To'liq input lock: Klaviatura, Touchpad, Touchscreen va Tashqi sichqoncha ───
+-- SUPER + ALT + L: barcha kiritish qurilmalarini to'liq qulflaydi / ochadi.
+-- Lock bo'lganda klaviaturada hech narsa yozilmaydi (catchall barcha tugmalarni yutadi),
+-- touchscreen, touchpad va tashqi sichqoncha (external mouse) to'liq o'chadi.
+
+hl.define_submap("keyboard_locked", function()
+  hl.bind("SUPER + ALT + L", function()
+    hl.dispatch(hl.dsp.exec_cmd("/home/nismo/.config/hypr/scripts/lock-mode.sh unlock"))
+    hl.dispatch(hl.dsp.submap("reset"))
+  end, { locked = true })
+
+  -- Barcha boshqa tugmalarni yutish (kursor turgan joyga hech narsa yozilmasligi uchun)
+  hl.bind("catchall", function() end, { locked = true })
+end)
+
+o.bind("SUPER + ALT + L", "🔒 Toggle full input lock", function()
+  hl.dispatch(hl.dsp.exec_cmd("/home/nismo/.config/hypr/scripts/lock-mode.sh lock"))
+  hl.dispatch(hl.dsp.submap("keyboard_locked"))
+end)
+
+

@@ -1,8 +1,14 @@
 {
   "bar": {
+    "id": "nismo.bar",
+    "fixed": true,
+    "locked": true,
     "centerAnchor": "omarchy.clock",
     "layout": {
       "center": [
+        {
+          "id": "omarchy.keyboard-layout"
+        },
         {
           "id": "omarchy.indicators"
         },
@@ -11,9 +17,6 @@
           "formatAlt": "d MMMM 'W'ww yyyy",
           "id": "omarchy.clock",
           "verticalFormat": "HH\n—\nmm"
-        },
-        {
-          "id": "omarchy.keyboard-layout"
         },
         {
           "id": "omarchy.weather"
@@ -35,7 +38,7 @@
       ]
     },
     "position": "top",
-    "transparent": false
+    "transparent": true
   },
   "idle": {
     "lock": 300,
