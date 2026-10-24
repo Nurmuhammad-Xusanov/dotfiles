@@ -63,8 +63,30 @@ hl.define_submap("keyboard_locked", function()
     hl.dispatch(hl.dsp.submap("reset"))
   end, { locked = true })
 
-  -- Barcha boshqa tugmalarni yutish (kursor turgan joyga hech narsa yozilmasligi uchun)
-  hl.bind("catchall", function() end, { locked = true })
+  -- Barcha boshqa tugmalarni yutish (oddiy, Shift, Ctrl, Alt, Super va ularning kombinatsiyalari)
+  -- Kursor turgan joyga Shift bosilganda ham hech narsa yozilmasligi uchun:
+  local mod_combinations = {
+    "",
+    "SHIFT + ",
+    "CTRL + ",
+    "ALT + ",
+    "SUPER + ",
+    "CTRL + SHIFT + ",
+    "ALT + SHIFT + ",
+    "SUPER + SHIFT + ",
+    "CTRL + ALT + ",
+    "SUPER + CTRL + ",
+    "SUPER + ALT + ",
+    "CTRL + ALT + SHIFT + ",
+    "SUPER + CTRL + SHIFT + ",
+    "SUPER + ALT + SHIFT + ",
+    "SUPER + CTRL + ALT + ",
+    "SUPER + CTRL + ALT + SHIFT + ",
+  }
+
+  for _, mod in ipairs(mod_combinations) do
+    hl.bind(mod .. "catchall", function() end, { locked = true })
+  end
 end)
 
 o.bind("SUPER + ALT + L", "🔒 Toggle full input lock", function()
