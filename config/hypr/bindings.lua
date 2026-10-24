@@ -63,29 +63,17 @@ hl.define_submap("keyboard_locked", function()
     hl.dispatch(hl.dsp.submap("reset"))
   end, { locked = true })
 
-  -- Barcha boshqa tugmalarni yutish (oddiy, Shift, Ctrl, Alt, Super va ularning kombinatsiyalari)
-  -- Kursor turgan joyga Shift bosilganda ham hech narsa yozilmasligi uchun:
-  local mod_combinations = {
-    "",
-    "SHIFT + ",
-    "CTRL + ",
-    "ALT + ",
-    "SUPER + ",
-    "CTRL + SHIFT + ",
-    "ALT + SHIFT + ",
-    "SUPER + SHIFT + ",
-    "CTRL + ALT + ",
-    "SUPER + CTRL + ",
-    "SUPER + ALT + ",
-    "CTRL + ALT + SHIFT + ",
-    "SUPER + CTRL + SHIFT + ",
-    "SUPER + ALT + SHIFT + ",
-    "SUPER + CTRL + ALT + ",
-    "SUPER + CTRL + ALT + SHIFT + ",
-  }
+  -- 1. Modifikatorsiz barcha oddiy tugmalarni yutish
+  hl.bind("catchall", function() end, { locked = true })
 
-  for _, mod in ipairs(mod_combinations) do
-    hl.bind(mod .. "catchall", function() end, { locked = true })
+  -- 2. Shift, Ctrl, Alt bosib turib yozilganda kursorga hech narsa tushmasligi uchun:
+  -- Har qanday fizik tugma (evdev keycode 1..128) bilan modifikatorlarni to'liq yutamiz
+  for c = 1, 128 do
+    hl.bind("SHIFT + code:" .. c, function() end, { locked = true })
+    hl.bind("CTRL + code:" .. c, function() end, { locked = true })
+    hl.bind("ALT + code:" .. c, function() end, { locked = true })
+    hl.bind("CTRL + SHIFT + code:" .. c, function() end, { locked = true })
+    hl.bind("ALT + SHIFT + code:" .. c, function() end, { locked = true })
   end
 end)
 
