@@ -29,10 +29,12 @@
 -- o.bind("SUPER + PERIOD", nil, "omarchy-shell shell toggle omarchy.emojis")
 o.bind("SUPER + SHIFT + S", "Screenshot", "omarchy-capture-screenshot")
 o.bind("SUPER + B", "Firefox", "firefox")
-o.bind("SUPER + C", "Code", "code")
+o.rebind("SUPER + C", "Code", "code")
 o.bind("SUPER + SHIFT + C", "Opencode", { tui = "opencode", focus = true })
-o.bind("SUPER + SHIFT + T", "Telegram", { launch = "Telegram", focus = "org.telegram.desktop" })
-o.bind("SUPER + CTRL + L", "Lock screen", "loginctl lock-session")
+o.rebind("SUPER + SHIFT + T", "Telegram", { launch = "Telegram", focus = "^(org.telegram.desktop|TelegramDesktop)$" })
+o.bind("SUPER + CTRL + SHIFT + T", "Telegram CLI", { tui = "telegram-cli", focus = true })
+o.rebind("SUPER + CTRL + L", "Lock screen", "pidof hyprlock || hyprlock")
+
 o.bind("SUPER + Y", "Yandex Music", { launch = "/opt/yandex-music/yandexmusic --gtk-version=3" })
 o.bind("SUPER + CTRL + SHIFT + D", "Rotate display", "omarchy-hyprland-monitor-rotate next")
 o.bind("CTRL + SHIFT + Z", "Previous track", "omarchy-shell media previous", { locked = true })
@@ -45,21 +47,27 @@ hl.unbind("SUPER + SHIFT + code:201")
 -- Power tugmasini o'chirish — Omarchy system menu chiqmasin.
 hl.unbind("XF86PowerOff")
 
+local home = os.getenv("HOME") or "/home/nismo"
+local scripts = home .. "/.config/hypr/scripts/"
+
 -- On-screen keyboard for tablet mode.
 --
 -- Not SUPER+K: Omarchy already binds that to the keybindings cheatsheet
 -- (default/hypr/bindings/utilities.lua), and since that bind is registered
 -- first it wins - the keyboard bind was silently dead. SUPER+N is free.
-o.bind("SUPER + N", "Toggle Keyboard", "/home/nismo/.config/hypr/scripts/toggle-keyboard.sh")
+o.bind("SUPER + N", "Toggle Keyboard", scripts .. "toggle-keyboard.sh")
 
 -- ── To'liq input lock: Klaviatura, Touchpad, Touchscreen va Tashqi sichqoncha ───
 -- SUPER + ALT + L: barcha kiritish qurilmalarini to'liq qulflaydi / ochadi.
 -- Lock bo'lganda klaviaturada hech narsa yozilmaydi (catchall barcha tugmalarni yutadi),
 -- touchscreen, touchpad va tashqi sichqoncha (external mouse) to'liq o'chadi.
 
+-- Omarchy'ning standart "SUPER + ALT + L" (Cycle workspace layout) bog'lanishini olib tashlaymiz
+hl.unbind("SUPER + ALT + L")
+
 hl.define_submap("keyboard_locked", function()
   hl.bind("SUPER + ALT + L", function()
-    hl.dispatch(hl.dsp.exec_cmd("/home/nismo/.config/hypr/scripts/lock-mode.sh unlock"))
+    hl.dispatch(hl.dsp.exec_cmd(scripts .. "lock-mode.sh unlock"))
     hl.dispatch(hl.dsp.submap("reset"))
   end, { locked = true })
 
@@ -78,8 +86,18 @@ hl.define_submap("keyboard_locked", function()
 end)
 
 o.bind("SUPER + ALT + L", "🔒 Toggle full input lock", function()
-  hl.dispatch(hl.dsp.exec_cmd("/home/nismo/.config/hypr/scripts/lock-mode.sh lock"))
+  hl.dispatch(hl.dsp.exec_cmd(scripts .. "lock-mode.sh lock"))
   hl.dispatch(hl.dsp.submap("keyboard_locked"))
 end)
+
+-- Display and monitor management (Win + P)
+hl.unbind("SUPER + P")
+o.bind("SUPER + P", "Project display mode", scripts .. "display-switcher-popup.py")
+o.bind("SUPER + SHIFT + P", "Display Settings GUI", scripts .. "display-manager.py")
+
+-- Wallpaper cycle (Next / Previous)
+o.rebind("SUPER + CTRL + RIGHT", "Next wallpaper", "omarchy-theme-bg-next")
+o.rebind("SUPER + CTRL + LEFT", "Previous wallpaper", "omarchy-theme-bg-prev")
+
 
 

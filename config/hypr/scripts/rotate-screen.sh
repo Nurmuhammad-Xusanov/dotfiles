@@ -55,11 +55,12 @@ for _, m in ipairs(hl.get_monitors()) do
     if m.x and m.y then position = m.x .. 'x' .. m.y end
   end
 end
-hl.monitor({ output = output, mode = 'preferred', position = position, scale = scale or 1, transform = t })
-hl.device({ name = '$TOUCH_DEVICE', transform = t })
+hl.monitor({ output = output, mode = 'preferred', position = position, scale = scale or 1, transform = t, bitdepth = 10 })
+hl.device({ name = '$TOUCH_DEVICE', transform = t, output = output })
 for _, name in ipairs({ $extras }) do
-  hl.device({ name = name, transform = t })
+  hl.device({ name = name, transform = t, output = output })
 end
+hl.config({ input = { tablet = { transform = t, output = output }, touchdevice = { transform = t, output = output } } })
 " >/dev/null
 }
 

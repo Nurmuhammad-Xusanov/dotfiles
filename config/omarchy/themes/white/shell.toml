@@ -1,0 +1,133 @@
+# Omarchy shell surfaces for White theme
+
+[bar]
+background       = "#ffffff"
+background-alpha = 1.0
+text             = "#000000"
+active           = "#2a2a2a"
+scale-with-font  = true
+size-horizontal  = 26
+size-vertical    = 28
+
+[hyprland]
+active-border            = "#ffffff"
+active-border-foreground = "#ffffff"
+
+[controls]
+normal-color        = "#000000"
+normal-fill-alpha   = 0.04
+normal-border       = "#ffffff"
+normal-border-width = 1
+normal-border-alpha = 0.7
+
+hover-cursor-color        = "#000000"
+hover-cursor-fill-alpha   = 0.08
+hover-cursor-border       = "#ffffff"
+hover-cursor-border-width = 1
+hover-cursor-border-alpha = 1.0
+
+focus-color        = "#000000"
+focus-fill-alpha   = 0.08
+focus-border       = "#ffffff"
+focus-border-width = 1
+focus-border-alpha = 1.0
+
+selected-color        = "#000000"
+selected-fill-alpha   = 0.12
+selected-border       = "#ffffff"
+selected-border-width = 1
+selected-border-alpha = 1.0
+
+pressed-fill-alpha   = 0.22
+selection-fill-alpha = 0.35
+
+[spacing]
+scale = 1.0
+scale-with-font = true
+
+[font]
+base-size = 12
+
+[popups]
+background       = "#ffffff"
+background-alpha = 1.0
+text             = "#000000"
+border           = "#ffffff"
+border-alpha     = 1.0
+border-width     = 2
+
+[tooltip]
+background       = "#ffffff"
+background-alpha = 0.97
+text             = "#000000"
+border           = "#ffffff"
+border-alpha     = 1.0
+
+[notifications]
+background       = "#ffffff"
+background-alpha = 1.0
+text             = "#000000"
+border           = "#ffffff"
+border-alpha     = 1.0
+border-width     = 2
+countdown        = "#c0c0c0"
+
+[launcher]
+background                = "#ffffff"
+background-alpha          = 0.96
+text                      = "#000000"
+border                    = "#ffffff"
+border-alpha              = 1.0
+scrim                     = "#ffffff"
+scrim-alpha               = 0.5
+selected-background       = "#000000"
+selected-background-alpha = 0.08
+selected-text             = "#000000"
+selected-border           = "#ffffff"
+selected-border-alpha     = 1.0
+
+[menu]
+background                = "#ffffff"
+background-alpha          = 1.0
+text                      = "#000000"
+border                    = "#ffffff"
+border-alpha              = 1.0
+scrim                     = "#ffffff"
+scrim-alpha               = 0.5
+selected-background       = "#000000"
+selected-background-alpha = 0.08
+selected-text             = "#000000"
+selected-border           = "#ffffff"
+selected-border-alpha     = 1.0
+
+[polkit]
+background       = "#ffffff"
+background-alpha = 1.0
+text             = "#000000"
+text-error       = "#d32f2f"
+border           = "#ffffff"
+border-error     = "#d32f2f"
+border-alpha     = 1.0
+scrim            = "#ffffff"
+scrim-alpha      = 0.5
+accent           = "#ffffff"
+
+[lock]
+background       = "#ffffff"
+background-alpha = 0.8
+text             = "#000000"
+placeholder      = "#757575"
+text-error       = "#d32f2f"
+border           = "#ffffff"
+border-active    = "#ffffff"
+border-error     = "#d32f2f"
+border-alpha     = 1.0
+selection        = "#c0c0c0"
+selection-alpha  = 0.45
+
+[image-picker]
+text                    = "#000000"
+selected-border         = "#ffffff"
+selected-border-alpha   = 1.0
+unselected-border       = "#ffffff"
+unselected-border-alpha = 0.4

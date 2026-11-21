@@ -1,0 +1,22 @@
+#!/bin/bash
+# Omarchy theme-set hook: Sync theme colors to GTK 3 & GTK 4 (Nautilus, etc.)
+set -euo pipefail
+
+THEME_DIR="$HOME/.local/state/omarchy/current/theme"
+GTK_CSS_SRC="$THEME_DIR/gtk.css"
+
+[[ -f $GTK_CSS_SRC ]] || exit 0
+
+mkdir -p "$HOME/.config/gtk-4.0" "$HOME/.config/gtk-3.0"
+
+GTK4_CSS="$HOME/.config/gtk-4.0/gtk.css"
+GTK3_CSS="$HOME/.config/gtk-3.0/gtk.css"
+
+cp "$GTK_CSS_SRC" "$GTK4_CSS"
+cp "$GTK_CSS_SRC" "$GTK3_CSS"
+
+# Re-apply glassy backdrop-filter if window-glassy toggle is enabled
+TOGGLES_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/omarchy/toggles/hypr"
+if [[ -f $TOGGLES_DIR/window-glassy.lua ]]; then
+  omarchy-theme-set-glass
+fi

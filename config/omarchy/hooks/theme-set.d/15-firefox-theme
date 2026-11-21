@@ -1,0 +1,68 @@
+#!/bin/bash
+# Omarchy theme-set hook: Sync theme colors and dark/light mode to Firefox
+# Executed automatically whenever `omarchy theme set <theme>` runs.
+set -euo pipefail
+
+THEME_DIR="$HOME/.local/state/omarchy/current/theme"
+COLORS_FILE="$THEME_DIR/colors.toml"
+
+[[ -f $COLORS_FILE ]] || exit 0
+
+MODE=$(omarchy-theme-color --file "$COLORS_FILE" mode)
+BG=$(omarchy-theme-color --file "$COLORS_FILE" background)
+FG=$(omarchy-theme-color --file "$COLORS_FILE" foreground)
+THEME_CSS="$THEME_DIR/firefox-theme.css"
+
+FIREFOX_DIR="$HOME/.config/mozilla/firefox"
+[[ -d $FIREFOX_DIR ]] || exit 0
+
+for profile_dir in "$FIREFOX_DIR"/*/; do
+  [[ -d "$profile_dir" ]] || continue
+  # Only touch actual profile directories
+  [[ -f "$profile_dir/prefs.js" || -f "$profile_dir/user.js" ]] || continue
+
+  chrome_dir="$profile_dir/chrome"
+  mkdir -p "$chrome_dir"
+
+  # Sync firefox-theme.css
+  if [[ -f $THEME_CSS ]]; then
+    cp "$THEME_CSS" "$chrome_dir/firefox-theme.css"
+  fi
+
+  # Update user.js
+  user_js="$profile_dir/user.js"
+  touch "$user_js"
+
+  if [[ "$MODE" == "dark" ]]; then
+    DARK_PREF=1
+    CONTENT_OVERRIDE=0
+    TOOLBAR_THEME=0
+    CONTENT_THEME=0
+  else
+    DARK_PREF=0
+    CONTENT_OVERRIDE=1
+    TOOLBAR_THEME=1
+    CONTENT_THEME=1
+  fi
+
+  # Helper to update or append user_pref in user.js
+  update_pref() {
+    local key="$1"
+    local val="$2"
+    if grep -q "user_pref(\"$key\"" "$user_js" 2>/dev/null; then
+      sed -i -E "s|user_pref\(\"$key\",[^\)]+\);|user_pref(\"$key\", $val);|" "$user_js"
+    else
+      # Ensure there's a newline before appending
+      [[ -s "$user_js" && -n "$(tail -c1 "$user_js")" ]] && echo "" >> "$user_js"
+      echo "user_pref(\"$key\", $val);" >> "$user_js"
+    fi
+  }
+
+  update_pref "toolkit.legacyUserProfileCustomizations.stylesheets" "true"
+  update_pref "ui.systemUsesDarkTheme" "$DARK_PREF"
+  update_pref "layout.css.prefers-color-scheme.content-override" "$CONTENT_OVERRIDE"
+  update_pref "browser.theme.toolbar-theme" "$TOOLBAR_THEME"
+  update_pref "browser.theme.content-theme" "$CONTENT_THEME"
+  update_pref "browser.display.background_color" "\"$BG\""
+  update_pref "browser.display.foreground_color" "\"$FG\""
+done

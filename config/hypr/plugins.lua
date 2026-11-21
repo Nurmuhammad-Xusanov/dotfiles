@@ -6,8 +6,9 @@
 -- Any plugin config must be required *after* the plugin is loaded, so that is
 -- why this file exists separately from hyprgrass.lua.
 
+local home = os.getenv("HOME") or "/home/nismo"
 local plugins = {
-    { path = "/home/nismo/.local/lib/hypr/plugins/libhyprgrass.so", config = "hypr.hyprgrass" },
+    { path = home .. "/.local/lib/hypr/plugins/libhyprgrass.so", config = "hypr.hyprgrass" },
 }
 
 for _, plugin in ipairs(plugins) do
@@ -23,6 +24,6 @@ for _, plugin in ipairs(plugins) do
     if loaded then
         require(plugin.config)
     else
-        hl.print("hyprgrass failed to load, skipping its config")
+        print("hyprgrass failed to load, skipping its config")
     end
 end

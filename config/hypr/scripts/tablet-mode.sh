@@ -1,70 +1,53 @@
 #!/bin/bash
-# Tablet-mode detection for the HP OmniBook X Flip 14.
-#
-# There is no SW_TABLET_MODE exposed to libinput/Hyprland on this machine
-# (hyprctl devices only lists "Lid Switch" and "HP WMI hotkeys"), so the
-# convertible/tablet flag is read straight from the hp-wmi driver instead:
-#
-#   /sys/devices/platform/hp-wmi/tablet   -> 0 = laptop, 1 = tablet
-#
-# In tablet mode the physical keyboard (AT translated set 2) and the touchpad
-# are disabled. Folding the device back restores both.
-#
-# The on-screen keyboard is deliberately NOT started here - it used to be
-# popped up on every fold, which was intrusive. It is now opened explicitly by
-# the top-edge swipe-down gesture, which is itself gated on tablet mode by
-# scripts/toggle-keyboard-tablet.sh (or with SUPER + N).
-#
-# NOTE: the ELAN touchscreen nodes (elan2514:*-keyboard, *-mouse, *-stylus)
-# are deliberately left enabled - *-keyboard is the touchscreen's own virtual
-# button row and *-mouse is finger input, not the physical keyboard.
-#
-# Escape hatch if this ever gets stuck: run
-#   ~/.config/hypr/scripts/tablet-mode-force-laptop
+# Tablet-mode detection for the HP OmniBook X Flip 14 via kernel WMI events.
+# HP OmniBook X Flip firmware emits WMI event 36:
+#   0x3, 0x4 -> Laptop mode (normal clamshell)
+#   0x2      -> Tent / Stand mode
+#   0x0, 0x1 -> Tablet mode (folded 360)
 
-set -u
-
-# Overridable only so the loop can be tested without physically folding the
-# laptop: OMARCHY_TABLET_FLAG=/tmp/fake-tablet ~/.config/hypr/scripts/tablet-mode.sh
-TABLET_FLAG="${OMARCHY_TABLET_FLAG:-/sys/devices/platform/hp-wmi/tablet}"
-POLL_INTERVAL="${OMARCHY_TABLET_POLL:-2}"
-
-# Built-in laptop keyboard and touchpad (external keyboards are left alone).
 PHYSICAL_KEYBOARD="at-translated-set-2-keyboard"
 TOUCHPAD="syna352b:00-06cb:cfc5-touchpad"
-
 STATE_FILE="/tmp/omarchy-tablet-mode"
 
-set_devices() {
-    local enabled="$1"
-    hyprctl eval "hl.device({name='$PHYSICAL_KEYBOARD', enabled=$enabled})" >/dev/null
-    hyprctl eval "hl.device({name='$TOUCHPAD', enabled=$enabled})" >/dev/null
-    echo "$enabled" >"$STATE_FILE"
-}
+current_mode=""
 
-notify() {
-    hyprctl eval "hl.notification.create({text='$1', duration=2500, icon='$2'})" >/dev/null
-}
+set_mode() {
+    local mode="$1"
+    [ "$mode" = "$current_mode" ] && return
+    current_mode="$mode"
 
-# Seed the state without notifying, so logging in never fires a spurious
-# "Laptop mode" notification, but a session that starts folded still gets the
-# right keyboard/touchpad state.
-last=$(cat "$TABLET_FLAG" 2>/dev/null || echo 0)
-set_devices "$([ "$last" = "1" ] && echo false || echo true)"
-
-while true; do
-    current=$(cat "$TABLET_FLAG" 2>/dev/null || echo "$last")
-
-    if [ "$current" != "$last" ]; then
-        if [ "$current" = "1" ]; then
-            set_devices false
-            notify "Tablet mode: keyboard + touchpad off" "info"
-        else
-            set_devices true
-            notify "Laptop mode: keyboard + touchpad on" "ok"
-        fi
-        last="$current"
+    if [ "$mode" = "tablet" ]; then
+        wtype -k Shift_L >/dev/null 2>&1 || true
+        hyprctl eval "hl.device({name='$PHYSICAL_KEYBOARD', enabled=false})" >/dev/null 2>&1
+        hyprctl eval "hl.device({name='$TOUCHPAD', enabled=false})" >/dev/null 2>&1
+        echo "1" > "$STATE_FILE"
+        omarchy-osd -i tablet -m "Tablet mode: Touch & Stylus ready" 2>/dev/null || true
+    else
+        hyprctl eval "hl.device({name='$PHYSICAL_KEYBOARD', enabled=true})" >/dev/null 2>&1
+        hyprctl eval "hl.device({name='$TOUCHPAD', enabled=true})" >/dev/null 2>&1
+        wtype -k Shift_L >/dev/null 2>&1 || true
+        echo "0" > "$STATE_FILE"
+        omarchy-osd -i laptop -m "Laptop mode: Keyboard & Touchpad active" 2>/dev/null || true
     fi
+}
 
-    sleep "$POLL_INTERVAL"
+# Seed initial state from the latest event in dmesg
+initial_val=$(journalctl -k -b -g "Unknown event_id - 36" -n 1 --no-pager 2>/dev/null | grep -o "0x[0-9]" | tail -1)
+if [[ "$initial_val" =~ ^0x[012] ]]; then
+    set_mode tablet
+else
+    set_mode laptop
+fi
+
+# Stream live kernel events for instant reaction
+journalctl -k -b -f -n 0 --no-pager 2>/dev/null | while read -r line; do
+    if [[ "$line" =~ "hp_wmi: Unknown event_id - 36 - 0x" ]]; then
+        val="${line##*0x}"
+        val="${val:0:1}"
+        if [[ "$val" =~ [012] ]]; then
+            set_mode tablet
+        elif [[ "$val" =~ [34] ]]; then
+            set_mode laptop
+        fi
+    fi
 done

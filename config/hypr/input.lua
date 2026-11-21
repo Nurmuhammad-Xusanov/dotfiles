@@ -1,6 +1,27 @@
 -- Keep only your personal input overrides here. Uncommented settings below
 -- replace Omarchy's defaults.
 
+-- MPP 2.0 Stylus & Touchscreen 1:1 Windows 11 calibration
+hl.config({
+  input = {
+    tablet = {
+      output = "eDP-1",
+    },
+    touchdevice = {
+      output = "eDP-1",
+    },
+  },
+  cursor = {
+    hide_on_tablet = true,
+    hide_on_touch = true,
+  },
+})
+
+hl.device({
+  name = "elan2514:00-04f3:465a",
+  output = "eDP-1",
+})
+
 -- Keyboard layout and options.
 -- See https://wiki.hypr.land/Configuring/Basics/Variables/#input
 -- hl.config({
@@ -55,3 +76,4 @@
 -- Enable touchpad gestures for moving focus (helpful on scrolling layout).
 -- hl.gesture({ fingers = 3, direction = "left", action = function() hl.dispatch(hl.dsp.focus({ direction = "l" })) end })
 -- hl.gesture({ fingers = 3, direction = "right", action = function() hl.dispatch(hl.dsp.focus({ direction = "r" })) end })
+

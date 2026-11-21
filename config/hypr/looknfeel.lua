@@ -15,19 +15,43 @@
 
 hl.config({
   general = {
-    ["col.active_border"] = "rgb(141414)",
-    ["col.inactive_border"] = "rgb(0a0a0a)",
+    gaps_in = 5,
+    gaps_out = 10,
+    border_size = 2,
+    resize_on_border = true,
   },
 })
 
 hl.config({
   decoration = {
     -- Use round window corners.
-    rounding = 8,
+    rounding = 10,
+
+    -- Window opacity
+    active_opacity = 1.0,
+    inactive_opacity = 0.94,
 
     -- Dim unfocused windows (0.0 = no dim, 1.0 = fully dimmed).
     dim_inactive = true,
-    dim_strength = 0.15,
+    dim_strength = 0.1,
+
+    -- Smooth drop shadows for depth
+    shadow = {
+      enabled = true,
+      range = 20,
+      render_power = 3,
+      color = "rgba(00000066)",
+    },
+
+    -- Frosted glass blur effect
+    blur = {
+      enabled = true,
+      size = 6,
+      passes = 3,
+      new_optimizations = true,
+      vibrancy = 0.17,
+      ignore_opacity = true,
+    },
   },
 })
 
@@ -114,3 +138,33 @@ hl.config({
 })
 
 hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
+-- Disable color management clamping so OLED wide gamut (DCI-P3) outputs natively and vividly
+hl.config({
+  render = {
+    cm_enabled = false,
+  },
+})
+
+-- Float and center display switcher and settings windows
+hl.window_rule({
+  name = "display-popup-float",
+  match = { class = "display-switcher-popup.py" },
+  float = true,
+  center = true,
+  size = { 360, 430 },
+})
+
+hl.window_rule({
+  name = "display-manager-float",
+  match = { class = "display-manager.py" },
+  float = true,
+  center = true,
+  size = { 700, 600 },
+})
+
+
+
+-- Opt another application in to Omarchy's standard transparency.
+-- Find its class with: hyprctl clients
+-- o.transparent_window("my-app")
+-- o.transparent_window("my-app", "0.9 0.85") -- Custom active/inactive opacity.

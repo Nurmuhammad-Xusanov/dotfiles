@@ -32,3 +32,8 @@ require("default.hypr.toggles")
 -- Add any other personal Hyprland configuration below.
 -- o.window("qemu", { workspace = "5" })
 
+-- Re-apply current theme overrides so theme-specific borders and shadows take precedence
+local require_optional = require("default.hypr.require_optional")
+package.loaded["omarchy.current.theme.hyprland"] = nil
+require_optional.module("omarchy.current.theme.hyprland")
+

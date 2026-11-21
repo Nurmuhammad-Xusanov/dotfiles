@@ -1,0 +1,22 @@
+#!/bin/bash
+# Omarchy theme-set hook: Sync theme colors to CAVA
+set -euo pipefail
+
+THEME_DIR="$HOME/.local/state/omarchy/current/theme"
+CAVA_THEME_SRC="$THEME_DIR/cava.theme"
+CAVA_THEMES_DIR="$HOME/.config/cava/themes"
+CAVA_CONFIG="$HOME/.config/cava/config"
+
+[[ -f $CAVA_THEME_SRC ]] || exit 0
+mkdir -p "$CAVA_THEMES_DIR"
+
+# Copy generated theme to cava themes directory
+cp "$CAVA_THEME_SRC" "$CAVA_THEMES_DIR/omarchy"
+
+# Touch config so live-config triggers immediate reload
+if [[ -f $CAVA_CONFIG ]]; then
+  touch "$CAVA_CONFIG"
+fi
+
+# Send USR1/USR2 signal to running cava for instant reload
+pkill -USR1 cava 2>/dev/null || pkill -USR2 cava 2>/dev/null || true

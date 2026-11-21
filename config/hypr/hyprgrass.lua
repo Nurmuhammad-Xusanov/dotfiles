@@ -17,7 +17,7 @@ local hg = hl.plugin.hyprgrass
 -- not guaranteed on a config reload. Without this guard a nil hg makes every
 -- hg.gesture below index nil and aborts the whole config load.
 if not hg then
-    hl.print("hyprgrass plugin not loaded, skipping touchscreen gesture config")
+    print("hyprgrass plugin not loaded, skipping touchscreen gesture config")
     return
 end
 
@@ -74,12 +74,20 @@ hg.bind {
     action = hl.dsp.exec_cmd("omarchy-menu summon apps"),
 }
 
--- On-screen keyboard: swipe down from the top edge.
--- Gated on tablet mode so it can never pop up over content in laptop mode.
+local home = os.getenv("HOME") or "/home/nismo"
+local scripts = home .. "/.config/hypr/scripts/"
+
+-- On-screen keyboard: swipe up from bottom edge OR swipe down from top edge.
+hg.bind {
+    pattern = { kind = "edge", origin = "down", direction = "up" },
+    action = hl.dsp.exec_cmd(scripts .. "toggle-keyboard.sh"),
+}
+
 hg.bind {
     pattern = { kind = "edge", origin = "up", direction = "down" },
-    action = hl.dsp.exec_cmd("/home/nismo/.config/hypr/scripts/toggle-keyboard-tablet.sh"),
+    action = hl.dsp.exec_cmd(scripts .. "toggle-keyboard.sh"),
 }
+
 
 -- Fullscreen toggle with a 4-finger tap. kind=tap is only accepted by
 -- hyprgrass.bind, not by hyprgrass.gesture.
@@ -102,5 +110,12 @@ hg.bind {
 -- toggles fullscreen, so the swipe is free.
 hg.bind {
     pattern = { kind = "swipe", fingers = 4, direction = "up" },
-    action = hl.dsp.exec_cmd("/home/nismo/.config/hypr/scripts/reading-mode.sh"),
+    action = hl.dsp.exec_cmd(scripts .. "reading-mode.sh"),
 }
+
+-- Screenshot: 4-finger swipe down captures the screen.
+hg.bind {
+    pattern = { kind = "swipe", fingers = 4, direction = "down" },
+    action = hl.dsp.exec_cmd("omarchy-capture-screenshot fullscreen"),
+}
+

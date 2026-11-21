@@ -6,3 +6,4 @@ o.launch_on_start("~/.config/hypr/scripts/rotate-screen.sh")
 
 -- Fold detection: disables the physical keyboard/touchpad in tablet mode
 o.launch_on_start("~/.config/hypr/scripts/tablet-mode.sh")
+

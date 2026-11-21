@@ -15,8 +15,8 @@
 
 set -euo pipefail
 
-HYPRLAND_COMMIT="efb50993780079460b0cbed1363e2166a2de1d9f"
-HYPRGRASS_COMMIT="8e605468cbf429791d61ddbfaeb14ff5e08fec3e"
+HYPRLAND_COMMIT="11cbc6c577b84ffb1edf4df3fc5b6128c3ae6947"
+HYPRGRASS_COMMIT="50e166017adc294c0c780c123022deebe99a4b05"
 SRC="${HYPRGRASS_SRC:-/tmp/hyprgrass-git}"
 DEST="$HOME/.local/lib/hypr/plugins/libhyprgrass.so"
 
