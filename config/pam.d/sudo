@@ -1,0 +1,9 @@
+#%PAM-1.0
+# Sudo PAM configuration with Howdy Face ID integration.
+#
+# Allows authenticating sudo commands with infrared facial recognition.
+
+auth            sufficient      /usr/lib/security/pam_howdy.so
+auth            include         system-auth
+account         include         system-auth
+session         include         system-auth

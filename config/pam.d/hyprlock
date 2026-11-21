@@ -1,0 +1,15 @@
+#%PAM-1.0
+# Hyprlock PAM configuration with Howdy IR facial recognition integration.
+#
+# Facial recognition is attempted first; on success, screen unlocks instantly.
+# If no face is recognized or camera is covered, falls back to password.
+
+auth    sufficient    pam_howdy.so
+
+auth    required      pam_faillock.so preauth silent
+auth    [success=1 default=bad] pam_unix.so try_first_pass
+auth    [default=die] pam_faillock.so authfail
+
+account include system-local-login
+password include system-local-login
+session include system-local-login
